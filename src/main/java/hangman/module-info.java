@@ -7,4 +7,6 @@ module hangman {
 
     opens hangman to javafx.fxml;
     exports hangman;
+    exports hangman.Model;
+    opens hangman.Model to javafx.fxml;
 }
