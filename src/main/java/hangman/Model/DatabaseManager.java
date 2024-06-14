@@ -35,7 +35,7 @@ public class DatabaseManager {
     }
 
     public static void createGame(String username, String word, int wrongGuesses, int time, boolean win) {
-        UUID game_id = UUID.randomUUID();
+        String game_id = UUID.randomUUID().toString();
 
         try (Connection conn = connect()) {
             String query = "INSERT INTO game_info (game_id, word, wrong_guesses, win, time, username) VALUES (?, ?, ?, ?, ?, ?)";
@@ -59,9 +59,6 @@ public class DatabaseManager {
         PreparedStatement ps = conn.prepareStatement(query);
         ps.setString(1, username);
         ResultSet rs = ps.executeQuery();
-
-        conn.close();
-
         if (rs.next()) {
             return new User(
                     rs.getString("username"),
@@ -69,7 +66,7 @@ public class DatabaseManager {
                     rs.getString("name")
             );
         }
-
+        conn.close();
         return null;
     }
 
@@ -79,10 +76,10 @@ public class DatabaseManager {
         PreparedStatement ps = conn.prepareStatement(query);
         ps.setString(1, username);
         ResultSet rs = ps.executeQuery();
-
+        Boolean x=rs.next();
         conn.close();
 
-        return rs.next();
+        return x;
     }
 
     public static List<Game> readGame() throws SQLException {
@@ -92,9 +89,6 @@ public class DatabaseManager {
         String query = "SELECT * FROM game_info";
         Statement stmt = conn.createStatement();
         ResultSet rs = stmt.executeQuery(query);
-
-        conn.close();
-
         while (rs.next()) {
             UUID uuid=UUID.fromString(rs.getString("game_id"));
             Game game = new Game(
@@ -107,7 +101,7 @@ public class DatabaseManager {
             );
             games.add(game);
         }
-
+        conn.close();
         return games;
     }
 }
